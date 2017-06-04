@@ -1,0 +1,23 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/addGroup.ico</file>
+        <file>icons/removeGroup.ico</file>
+        <file>icons/editGroup.png</file>
+        <file>icons/addEntry.ico</file>
+        <file>icons/removeEntry.ico</file>
+        <file>icons/editEntry.png</file>
+        <file>icons/new.png</file>
+        <file>icons/save.ico</file>
+        <file>icons/open.ico</file>
+        <file>icons/entry.png</file>
+        <file>icons/group.png</file>
+        <file>icons/winGroup.png</file>
+        <file>icons/user.ico</file>
+        <file>icons/addWinGroup.png</file>
+        <file>icons/editWinGroup.png</file>
+        <file>icons/removeWinGroup.png</file>
+        <file>icons/addWinUser.png</file>
+        <file>icons/editWinUser.png</file>
+        <file>icons/removeWinUser.png</file>
+    </qresource>
+</RCC>
