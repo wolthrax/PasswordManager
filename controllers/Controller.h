@@ -13,11 +13,13 @@
 
 #include "dialogs/AddEntryDialog.h"
 #include "dialogs/AddGroupDialog.h"
+#include "dialogs/AddUserDialog.h"
 #include "entities/Group.h"
 #include "entities/CurrentObjects.h"
 #include "managers/GroupManager.h"
 #include "managers/EntryManager.h"
 #include "managers/XMLManager.h"
+#include "utils/StringConverter.h"
 
 namespace Ui {
 class MainWindow;
@@ -72,6 +74,11 @@ private slots:
 
     void on_actionRemove_windows_group_triggered();
 
+    void on_actionAdd_windows_user_triggered();
+
+    void on_actionEdit_windows_user_triggered();
+
+    void on_actionRemove_windows_user_triggered();
 
 private:
     Ui::MainWindow *ui;

@@ -25,6 +25,9 @@ public:
     QList<QTreeWidgetItem*> getEntryItemList();
     QList<QTreeWidgetItem*> getEntryItemListByGroupId(QString);
     QList<QTreeWidgetItem*> getWindowsEntryItemListNyGroupName(QString);
+    int addWindowsUser(USER_INFO_1);
+    int editWindowsUser(USER_INFO_1, QString);
+    int removeWindowsUser(QString);
 
 private:
     UserSystem userSystem;

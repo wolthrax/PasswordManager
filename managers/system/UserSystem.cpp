@@ -4,6 +4,36 @@ UserSystem::UserSystem(){}
 
 UserSystem::~UserSystem(){}
 
+QList<USER_INFO_1 *> UserSystem::getAllWindowsUser()
+{
+    QList<USER_INFO_1*> userList;
+    USER_INFO_1 *userInfo;                                      // информация о пользователе
+    DWORD entries_read;                                         // количество прочитанных пользователей
+    DWORD total_entries;                                        // общее количество пользователей
+    NET_API_STATUS ret_status;                                  // код возврата из функции
+
+    ret_status = NetUserEnum(
+                    NULL,                                        // имя сервера
+                    1,                                           // узнаем только имена пользователей
+                    FILTER_NORMAL_ACCOUNT,                       // перечисляем пользователей, зарегистрированных на компьютере
+                    (LPBYTE*)&userInfo,                          // адрес информации о пользователях
+                    MAX_PREFERRED_LENGTH,                        // перечисляем всех пользователей
+                    &entries_read,                               // количество прочитанных пользователей
+                    &total_entries,                              // общее количество пользователей
+                    NULL);                                       // индексации нет
+
+    if(ret_status == NERR_Success)
+    {
+        for (DWORD i = 0; i < entries_read; ++i)
+        {
+           userList.append(&userInfo[i]);
+           // qDebug() << QString::fromWCharArray(userInfo[i]);
+        }
+        NetApiBufferFree(&userList); // освобождаем буфер
+    }
+    return userList;
+}
+
 QList<USER_INFO_1*> UserSystem::getWindowsUserInfoByGroupName(wchar_t * groupName)
 {
     QList<USER_INFO_1*> windowsUserList;
@@ -44,4 +74,37 @@ QList<USER_INFO_1*> UserSystem::getWindowsUserInfoByGroupName(wchar_t * groupNam
     }
     NetApiBufferFree(member_info); // освобождаем буфер
     return windowsUserList;
+}
+
+int UserSystem::addWindowsUser(USER_INFO_1 userInfo)
+{
+    NET_API_STATUS ret_status;
+    ret_status = NetUserAdd(
+                        NULL,                                   // имя сервера
+                        1,                                      // уровень информации 1
+                        (LPBYTE)&userInfo,                      // адрес информации о пользователе
+                        NULL);                                  // индексирования в структуре данных нет
+    return ret_status;
+}
+
+int UserSystem::editWindowsUser(USER_INFO_1 userUnfo, wchar_t *oldUserName)
+{
+    NET_API_STATUS ret_status;
+    ret_status = NetUserSetInfo(
+                        NULL,                                   // имя сервера
+                        oldUserName,                            // имя пользователя
+                        0,                                      // изменяем имя пользователя
+                        (LPBYTE)&userUnfo,                      // адрес информации о пользователе
+                        NULL);                                  // нет индексации
+    return ret_status;
+}
+
+int UserSystem::removeWindowsUser(wchar_t *userName)
+{
+    NET_API_STATUS ret_status;
+    qDebug() << QString::fromWCharArray(userName);
+    ret_status = NetUserDel(
+        NULL,                                                   // имя домена
+        (LPWSTR)userName);                                      // имя пользователя
+    return ret_status;
 }

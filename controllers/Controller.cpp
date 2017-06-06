@@ -268,24 +268,15 @@ void MainWindow::on_actionAdd_windows_group_triggered()
     }
     else if(status == -1)
     {
-        QMessageBox::critical (0,
-                                "Error",
-                                "Not enough rights to create a group of windows",
-                                QMessageBox::Ok);
+        QMessageBox::critical (0, "Error", "Not enough rights to create a group of windows", QMessageBox::Ok);
     }
     if(status == -2)
     {
-        QMessageBox::critical (0,
-                                "Error",
-                                "Group " + addGroupDialog->getName() + " already exists",
-                                QMessageBox::Ok);
+        QMessageBox::critical (0, "Error", "Group " + addGroupDialog->getName() + " already exists", QMessageBox::Ok);
     }
     if(status == -3)
     {
-        QMessageBox::critical (0,
-                                "Error",
-                                "Unnown error",
-                                QMessageBox::Ok);
+        QMessageBox::critical (0, "Error", "Unnown error", QMessageBox::Ok);
     }
 }
 
@@ -307,24 +298,15 @@ void MainWindow::on_actionEdit_windows_group_triggered()
     }
     else if(status == -1)
     {
-        QMessageBox::critical (0,
-                                "Error",
-                                "Not enough rights to update a group of windows",
-                                QMessageBox::Ok);
+        QMessageBox::critical (0, "Error", "Not enough rights to update a group of windows", QMessageBox::Ok);
     }
     if(status == -2)
     {
-        QMessageBox::critical (0,
-                                "Error",
-                                "Group " + addGroupDialog->getName() + " already exists",
-                                QMessageBox::Ok);
+        QMessageBox::critical (0, "Error", "Group " + addGroupDialog->getName() + " already exists", QMessageBox::Ok);
     }
     if(status == -3)
     {
-        QMessageBox::critical (0,
-                                "Error",
-                                "Unnown error",
-                                QMessageBox::Ok);
+        QMessageBox::critical (0, "Error", "Unnown error", QMessageBox::Ok);
     }
 }
 
@@ -344,24 +326,89 @@ void MainWindow::on_actionRemove_windows_group_triggered()
         }
         else if(status == -1)
         {
-            QMessageBox::critical (0,
-                                    "Error",
-                                    "Not enough rights to remove a group of windows",
-                                    QMessageBox::Ok);
+            QMessageBox::critical (0, "Error", "Not enough rights to remove a group of windows", QMessageBox::Ok);
         }
         else if(status == -2)
         {
-            QMessageBox::critical (0,
-                                    "Error",
-                                    "Group " + item->text(0) + " does not exists",
-                                    QMessageBox::Ok);
+            QMessageBox::critical (0, "Error", "Group " + item->text(0) + " does not exists", QMessageBox::Ok);
         }
         else if(status == -3)
         {
-            QMessageBox::critical (0,
-                                    "Error",
-                                    "Unnown error",
-                                    QMessageBox::Ok);
+            QMessageBox::critical (0, "Error", "Unnown error", QMessageBox::Ok);
         }
+    }
+}
+
+void MainWindow::on_actionAdd_windows_user_triggered()
+{
+    AddUserDialog* addUserDialog = new AddUserDialog();
+    if (addUserDialog->exec() == QDialog::Accepted)
+    {
+        USER_INFO_1 userInfo;
+        userInfo.usri1_name = StringConverter::toWCHAR(addUserDialog->getUserName());
+        userInfo.usri1_comment = StringConverter::toWCHAR(addUserDialog->getNotes());
+        userInfo.usri1_home_dir = StringConverter::toWCHAR("C:\\Users\\" + addUserDialog->getUserName());
+        userInfo.usri1_flags = UF_SCRIPT;
+        userInfo.usri1_script_path = NULL;
+        userInfo.usri1_priv = USER_PRIV_USER;
+
+        if(addUserDialog->getPassword() == addUserDialog->getPasswordRepeat())
+        {
+            userInfo.usri1_password = StringConverter::toWCHAR(addUserDialog->getPassword());
+            int status = entryManager->addWindowsUser(userInfo);
+            status = groupManager->addMemberInWindowsGroup(ui->windowsGroupWidget->currentItem()->text(0) ,addUserDialog->getUserName());
+            QMessageBox::critical (0, "Attention", QString::number(status), QMessageBox::Ok);
+
+        }
+        else
+        {
+            // TODO Error
+            on_actionAdd_windows_user_triggered();
+        }
+    }
+}
+
+void MainWindow::on_actionEdit_windows_user_triggered()
+{
+    AddUserDialog* addUserDialog = new AddUserDialog(0,
+                                                     ui->entryWidget->currentItem()->text(1),
+                                                     ui->entryWidget->currentItem()->text(2),
+                                                     ui->entryWidget->currentItem()->text(2),
+                                                     ui->entryWidget->currentItem()->text(5));
+    if (addUserDialog->exec() == QDialog::Accepted)
+    {
+        USER_INFO_1 userInfo;
+        userInfo.usri1_name = StringConverter::toWCHAR(addUserDialog->getUserName());
+        userInfo.usri1_comment = StringConverter::toWCHAR(addUserDialog->getNotes());
+        userInfo.usri1_home_dir = StringConverter::toWCHAR("C:\\Users\\" + addUserDialog->getUserName());
+        userInfo.usri1_flags = UF_SCRIPT;
+        userInfo.usri1_script_path = NULL;
+        userInfo.usri1_priv = USER_PRIV_USER;
+
+        if(addUserDialog->getPassword() == addUserDialog->getPasswordRepeat())
+        {
+            userInfo.usri1_password = StringConverter::toWCHAR(addUserDialog->getPassword());
+            int status = entryManager->editWindowsUser(userInfo, ui->entryWidget->currentItem()->text(1));
+            QMessageBox::critical (0, "Attention", QString::number(status), QMessageBox::Ok);
+
+        }
+        else
+        {
+            // TODO Error
+            on_actionAdd_windows_user_triggered();
+        }
+    }
+}
+
+void MainWindow::on_actionRemove_windows_user_triggered()
+{
+    QTreeWidgetItem* item = ui->entryWidget->currentItem();
+    QMessageBox *message = new QMessageBox(QMessageBox::Information, "Remove group", "Do you want to delete group " + item->text(0), QMessageBox::Yes | QMessageBox::No);
+    int n = message->exec();
+    delete message;
+    if(n==QMessageBox::Yes)
+    {
+        int status = entryManager->removeWindowsUser(item->text(1));
+        QMessageBox::critical (0, "Attention", QString::number(status), QMessageBox::Ok);
     }
 }

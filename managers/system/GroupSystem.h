@@ -17,6 +17,7 @@ public:
     int addWindowsGroup(wchar_t*, wchar_t*);
     int editWindowsGroup(wchar_t*, wchar_t*, wchar_t*);
     int removeWindowsGroup(wchar_t*);
+    int addMembers(wchar_t*, wchar_t*);
 };
 
 #endif // GROUPSYSTEM_H

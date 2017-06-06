@@ -28,6 +28,7 @@ public:
     int addWindowsGroup(QString, QString);
     int editWindowsGroup(QString, QString, QString);
     int removeWindowsGroup(QString);
+    int addMemberInWindowsGroup(QString, QString);
 
 private:
     GroupSystem groupSystem;

@@ -170,9 +170,9 @@
     <addaction name="actionEdit_windows_group"/>
     <addaction name="actionRemove_windows_group"/>
     <addaction name="separator"/>
-    <addaction name="actionAdd_windows_group_2"/>
-    <addaction name="actionEdit_windows_group_2"/>
-    <addaction name="actionRemove_windows_group_2"/>
+    <addaction name="actionAdd_windows_user"/>
+    <addaction name="actionEdit_windows_user"/>
+    <addaction name="actionRemove_windows_user"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -203,9 +203,9 @@
    <addaction name="actionEdit_windows_group"/>
    <addaction name="actionRemove_windows_group"/>
    <addaction name="separator"/>
-   <addaction name="actionAdd_windows_group_2"/>
-   <addaction name="actionEdit_windows_group_2"/>
-   <addaction name="actionRemove_windows_group_2"/>
+   <addaction name="actionAdd_windows_user"/>
+   <addaction name="actionEdit_windows_user"/>
+   <addaction name="actionRemove_windows_user"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -343,7 +343,7 @@
     <string>Remove windows group</string>
    </property>
   </action>
-  <action name="actionAdd_windows_group_2">
+  <action name="actionAdd_windows_user">
    <property name="icon">
     <iconset resource="../resources/iconpaths.qrc">
      <normaloff>:/icons/addWinUser.png</normaloff>:/icons/addWinUser.png</iconset>
@@ -352,7 +352,7 @@
     <string>Add windows user</string>
    </property>
   </action>
-  <action name="actionEdit_windows_group_2">
+  <action name="actionEdit_windows_user">
    <property name="icon">
     <iconset resource="../resources/iconpaths.qrc">
      <normaloff>:/icons/editWinUser.png</normaloff>:/icons/editWinUser.png</iconset>
@@ -361,7 +361,7 @@
     <string>Edit windows user</string>
    </property>
   </action>
-  <action name="actionRemove_windows_group_2">
+  <action name="actionRemove_windows_user">
    <property name="icon">
     <iconset resource="../resources/iconpaths.qrc">
      <normaloff>:/icons/removeWinUser.png</normaloff>:/icons/removeWinUser.png</iconset>

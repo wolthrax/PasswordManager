@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     utils/StringConverter.cpp \
     managers/system/UserSystem.cpp \
     managers/system/GroupSystem.cpp \
-    dialogs/AddUserDialog.cpp
+    dialogs/AddUserDialog.cpp \
+    dialogs/Messages.cpp
 
 HEADERS  += controllers/Controller.h \
     entities/Group.h \
@@ -45,7 +46,8 @@ HEADERS  += controllers/Controller.h \
     utils/StringConverter.h \
     managers/system/UserSystem.h \
     managers/system/GroupSystem.h \
-    dialogs/AddUserDialog.h
+    dialogs/AddUserDialog.h \
+    dialogs/Messages.h
 
 FORMS    += ui/Mainwindow.ui
 

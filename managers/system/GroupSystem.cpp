@@ -131,3 +131,18 @@ int GroupSystem::removeWindowsGroup(wchar_t * name)
         return -2;
     } else return -3;
 }
+
+int GroupSystem::addMembers(wchar_t * groupName, wchar_t * userName)
+{
+    NET_API_STATUS ret_status;
+    LOCALGROUP_MEMBERS_INFO_3 member;
+    member.lgrmi3_domainandname = userName;
+    qDebug() << QString::fromWCharArray(userName);
+    ret_status = NetLocalGroupAddMembers(
+               NULL,                                        // имя сервера
+               groupName,                                   // имя группы
+               3,                                           // уровень информации
+               (LPBYTE)&member,                             // имя учетной записи
+               1);                                          // добавляем одного члена группы
+    return ret_status;
+}

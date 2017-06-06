@@ -34,7 +34,6 @@ void EntryManager::editEntry(Entry entry)
             break;
         }
     }
-    qDebug() << CurrentObjects::entryList.size();
 }
 
 QList<QTreeWidgetItem*> EntryManager::getEntryItemList()
@@ -66,18 +65,29 @@ QList<QTreeWidgetItem*> EntryManager::getEntryItemListByGroupId(QString groupId)
 QList<QTreeWidgetItem *> EntryManager::getWindowsEntryItemListNyGroupName(QString groupName)
 {
     QList<QTreeWidgetItem*> windowsEntryItemList;
-    QList<USER_INFO_1*> userInfoList = userSystem.getWindowsUserInfoByGroupName(StringConverter::toWCHAR(groupName));
+    QList<USER_INFO_1*> userInfoList;
+    if(groupName == "All users")
+        userInfoList = userSystem.getAllWindowsUser();
+    else userInfoList = userSystem.getWindowsUserInfoByGroupName(StringConverter::toWCHAR(groupName));
     for(USER_INFO_1* userInfo : userInfoList)
     {
-        QTreeWidgetItem *item = new QTreeWidgetItem();
-        item->setText(0, "User");
-        item->setIcon(0, QIcon("://icons/user.ico"));
-        item->setText(1, StringConverter::toQString(userInfo->usri1_name));
-        item->setText(2, "********");
-        item->setText(3, StringConverter::toQString(userInfo->usri1_home_dir));
-        item->setText(4, StringConverter::toQString(userInfo->usri1_comment));
+        QTreeWidgetItem *item = EntryConverter::convertToItem(userInfo);
         windowsEntryItemList.append(item);
-        NetApiBufferFree(userInfo);
     }
     return windowsEntryItemList;
+}
+
+int EntryManager::addWindowsUser(USER_INFO_1 userInfo)
+{
+    return userSystem.addWindowsUser(userInfo);
+}
+
+int EntryManager::editWindowsUser(USER_INFO_1 userInfo, QString oldUserName)
+{
+    return userSystem.editWindowsUser(userInfo, StringConverter::toWCHAR(oldUserName));
+}
+
+int EntryManager::removeWindowsUser(QString userName)
+{
+    return userSystem.removeWindowsUser(StringConverter::toWCHAR(userName));
 }

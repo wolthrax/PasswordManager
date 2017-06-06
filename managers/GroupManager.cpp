@@ -64,8 +64,12 @@ QList<QTreeWidgetItem*> GroupManager::getWindowsGroupItemList()
         item->setIcon(0, QIcon("://icons/winGroup.png"));
         item->setToolTip(0, QString::fromWCharArray(groupInfo->lgrpi1_comment));
         windowsGroupItemList.append(item);
-        NetApiBufferFree(&groupInfo); // освобождаем буфер для данных
     }
+    QTreeWidgetItem *item = new QTreeWidgetItem;
+    item->setText(0, "All users");
+    item->setIcon(0, QIcon("://icons/winGroup.png"));
+    item->setToolTip(0, "All users");
+    windowsGroupItemList.insert(0, item);
     return windowsGroupItemList;
 }
 
@@ -84,4 +88,9 @@ int GroupManager::editWindowsGroup(QString oldName, QString name, QString commen
 int GroupManager::removeWindowsGroup(QString name)
 {
     return groupSystem.removeWindowsGroup(StringConverter::toWCHAR(name));
+}
+
+int GroupManager::addMemberInWindowsGroup(QString groupName, QString userName)
+{
+    return groupSystem.addMembers(StringConverter::toWCHAR(groupName), StringConverter::toWCHAR(userName));
 }
