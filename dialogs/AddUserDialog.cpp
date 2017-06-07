@@ -1,6 +1,7 @@
 #include "AddUserDialog.h"
 
 AddUserDialog::AddUserDialog(QWidget* pwgt/*= 0*/,
+                             QString type,
                              QString userName,
                              QString password,
                              QString passwordRepeat,
@@ -18,6 +19,11 @@ AddUserDialog::AddUserDialog(QWidget* pwgt/*= 0*/,
     QLabel *userNameLbl = new QLabel("&User name");
     QLabel *passwordLbl = new QLabel("&Password");
     QLabel *passwordRepeatLbl = new QLabel("&Repeat");
+    if(type != "add")
+    {
+        passwordLbl = new QLabel("&Old password");
+        passwordRepeatLbl = new QLabel("&New password");
+    }
     QLabel *notesLbl = new QLabel("&Notes");
 
     userNameLbl->setBuddy(userNameLineEdit);
@@ -36,12 +42,14 @@ AddUserDialog::AddUserDialog(QWidget* pwgt/*= 0*/,
     gridLayout->addWidget(userNameLbl, 0, 0);
     gridLayout->addWidget(passwordLbl, 1, 0);
     gridLayout->addWidget(passwordRepeatLbl, 2, 0);
-    gridLayout->addWidget(notesLbl, 3, 0);
+    if(type == "add")
+        gridLayout->addWidget(notesLbl, 3, 0);
 
     gridLayout->addWidget(userNameLineEdit, 0, 1);
     gridLayout->addWidget(passwordLineEdit, 1, 1);
     gridLayout->addWidget(passwordRepeatLineEdit, 2, 1);
-    gridLayout->addWidget(notesTextEdit, 3, 1);
+    if(type == "add")
+        gridLayout->addWidget(notesTextEdit, 3, 1);
 
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->addWidget(pcmdOk);

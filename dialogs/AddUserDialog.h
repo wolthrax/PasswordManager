@@ -23,6 +23,7 @@ private:
 
 public:
     AddUserDialog(QWidget* pwgt = 0,
+                  QString type = "add",
                   QString userName = 0,
                   QString password = 0,
                   QString passwordRepeat = 0,

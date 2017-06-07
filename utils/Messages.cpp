@@ -14,6 +14,8 @@ QString Messages::getMessage(int status)
         return "A group with this name does not exist.";
     else if(status == 87)
         return "Invalid parameter.";
+    else if(status == 86)
+        return "Invalid old password.";
     else if(status == 2223)
         return "Group already exists.";
     else if(status == -1)

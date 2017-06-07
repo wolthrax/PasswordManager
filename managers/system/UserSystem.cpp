@@ -88,8 +88,10 @@ int UserSystem::addWindowsUser(USER_INFO_1 userInfo)
     return ret_status;
 }
 
-int UserSystem::editWindowsUser(USER_INFO_1 userUnfo, wchar_t *oldUserName)
+int UserSystem::editWindowsUser(USER_INFO_1 userUnfo, wchar_t *oldUserName, wchar_t *newPassword)
 {
+    wchar_t *newUserName = userUnfo.usri1_name;
+    wchar_t *oldPassword = userUnfo.usri1_password;
     NET_API_STATUS ret_status;
     ret_status = NetUserSetInfo(
                         NULL,                                   // имя сервера
@@ -97,7 +99,13 @@ int UserSystem::editWindowsUser(USER_INFO_1 userUnfo, wchar_t *oldUserName)
                         0,                                      // изменяем имя пользователя
                         (LPBYTE)&userUnfo,                      // адрес информации о пользователе
                         NULL);                                  // нет индексации
-    NetApiBufferFree(&userUnfo);
+
+    ret_status = NetUserChangePassword(
+                        NULL,                                   // имя домена
+                        newUserName,                            // имя пользователя
+                        oldPassword,                            // старый пароль
+                        newPassword);                           // новый пароль
+        NetApiBufferFree(&userUnfo);
     return ret_status;
 }
 

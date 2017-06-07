@@ -229,7 +229,7 @@ void MainWindow::on_actionAdd_windows_user_triggered()
 
 void MainWindow::on_actionEdit_windows_user_triggered()
 {
-    AddUserDialog* addUserDialog = new AddUserDialog(0,
+    AddUserDialog* addUserDialog = new AddUserDialog(0, "",
                                                      ui->entryWidget->currentItem()->text(1),
                                                      ui->entryWidget->currentItem()->text(2),
                                                      ui->entryWidget->currentItem()->text(2),
@@ -238,26 +238,12 @@ void MainWindow::on_actionEdit_windows_user_triggered()
     {
         USER_INFO_1 userInfo;
         userInfo.usri1_name = StringConverter::toWCHAR(addUserDialog->getUserName());
-        userInfo.usri1_comment = StringConverter::toWCHAR(addUserDialog->getNotes());
-        userInfo.usri1_home_dir = StringConverter::toWCHAR("C:\\Users\\" + addUserDialog->getUserName());
-        userInfo.usri1_flags = UF_SCRIPT;
-        userInfo.usri1_script_path = NULL;
-        userInfo.usri1_priv = USER_PRIV_USER;
 
-        if(addUserDialog->getPassword() == addUserDialog->getPasswordRepeat())
-        {
-            userInfo.usri1_password = StringConverter::toWCHAR(addUserDialog->getPassword());
-            int status = entryManager->editWindowsUser(userInfo, ui->entryWidget->currentItem()->text(1));
-            if(status != 0)
-                QMessageBox::critical (0, "Error", Messages::getMessage(status), QMessageBox::Ok);
-            else refreshWidget("windowsEntryWidget", ui->windowsGroupWidget->currentItem()->text(0));
-
-        }
-        else
-        {
-            // TODO Error
-            on_actionAdd_windows_user_triggered();
-        }
+        userInfo.usri1_password = StringConverter::toWCHAR(addUserDialog->getPassword());
+        int status = entryManager->editWindowsUser(userInfo, ui->entryWidget->currentItem()->text(1), addUserDialog->getPasswordRepeat());
+        if(status != 0)
+            QMessageBox::critical (0, "Error", Messages::getMessage(status), QMessageBox::Ok);
+        else refreshWidget("windowsEntryWidget", ui->windowsGroupWidget->currentItem()->text(0));
     }
 }
 

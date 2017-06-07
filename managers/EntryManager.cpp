@@ -82,9 +82,9 @@ int EntryManager::addWindowsUser(USER_INFO_1 userInfo)
     return userSystem.addWindowsUser(userInfo);
 }
 
-int EntryManager::editWindowsUser(USER_INFO_1 userInfo, QString oldUserName)
+int EntryManager::editWindowsUser(USER_INFO_1 userInfo, QString oldUserName, QString newPassword)
 {
-    return userSystem.editWindowsUser(userInfo, StringConverter::toWCHAR(oldUserName));
+    return userSystem.editWindowsUser(userInfo, StringConverter::toWCHAR(oldUserName), StringConverter::toWCHAR(newPassword));
 }
 
 int EntryManager::removeWindowsUser(QString userName)

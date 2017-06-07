@@ -18,7 +18,7 @@ public:
     QList<USER_INFO_1*> getAllWindowsUser();
     QList<USER_INFO_1*> getWindowsUserInfoByGroupName(wchar_t*);
     int addWindowsUser(USER_INFO_1);
-    int editWindowsUser(USER_INFO_1, wchar_t*);
+    int editWindowsUser(USER_INFO_1, wchar_t*, wchar_t*);
     int removeWindowsUser(wchar_t*);
 };
 
