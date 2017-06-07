@@ -57,23 +57,11 @@ private slots:
 
     void on_actionAddEntry_triggered();
 
-    void on_groupWidget_itemSelectionChanged();
-
-    void on_actionRemoveEntry_triggered();
-
-    void on_entryWidget_itemSelectionChanged();
+    void on_actionCopy_password_to_clipboard_triggered();
 
     void on_actionEditEntry_triggered();
 
-    void on_groupWidget_itemClicked(QTreeWidgetItem *item);
-
-    void on_actionSave_triggered();
-
-    void on_actionOpen_triggered();
-
-    void on_actionNew_triggered();
-
-    void on_windowsGroupWidget_itemClicked(QTreeWidgetItem *item);
+    void on_actionRemoveEntry_triggered();
 
     void on_actionAdd_windows_group_triggered();
 
@@ -87,9 +75,22 @@ private slots:
 
     void on_actionRemove_windows_user_triggered();
 
+    void on_actionSave_triggered();
+
+    void on_actionOpen_triggered();
+
+    void on_actionNew_triggered();
+
+    void on_entryWidget_itemSelectionChanged();
+
+    void on_groupWidget_itemSelectionChanged();
+
+    void on_groupWidget_itemClicked(QTreeWidgetItem *item);
+
+    void on_windowsGroupWidget_itemClicked(QTreeWidgetItem *item);
+
     void on_windowsGroupWidget_itemSelectionChanged();
 
-    void on_actionCopy_password_to_clipboard_triggered();
 
 private:
     Ui::MainWindow *ui;
