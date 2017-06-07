@@ -18,6 +18,8 @@ QString Messages::getMessage(int status)
         return "Invalid old password.";
     else if(status == 2223)
         return "Group already exists.";
+    else if(status == 2220)
+        return "Group does not exists.";
     else if(status == -1)
         return "The file can not be written to this directory\nDo you want to change another directory?";
     else if(status == -2)
