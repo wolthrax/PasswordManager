@@ -151,7 +151,7 @@ void MainWindow::on_actionEditEntry_triggered()
 void MainWindow::on_actionAdd_windows_group_triggered()
 {
     AddGroupDialog* addGroupDialog = new AddGroupDialog();
-    int status;
+    int status = 0;
     if (addGroupDialog->exec() == QDialog::Accepted)
     {
         status = groupManager->addWindowsGroup(addGroupDialog->getName(), addGroupDialog->getNotes());
@@ -166,7 +166,7 @@ void MainWindow::on_actionEdit_windows_group_triggered()
     AddGroupDialog* addGroupDialog = new AddGroupDialog(0,
                                                         ui->windowsGroupWidget->currentItem()->text(0),
                                                         ui->windowsGroupWidget->currentItem()->toolTip(0));
-    int status;
+    int status = 0;
     if (addGroupDialog->exec() == QDialog::Accepted)
     {
         status = groupManager->editWindowsGroup(ui->windowsGroupWidget->currentItem()->text(0),
