@@ -10,7 +10,9 @@ AddUserDialog::AddUserDialog(QWidget* pwgt/*= 0*/,
 {
     userNameLineEdit = new QLineEdit(userName);
     passwordLineEdit = new QLineEdit(password);
+    passwordLineEdit->setEchoMode(QLineEdit::Password);
     passwordRepeatLineEdit = new QLineEdit(passwordRepeat);
+    passwordRepeatLineEdit->setEchoMode(QLineEdit::Password);
     notesTextEdit = new QTextEdit(notes);
 
     QLabel *userNameLbl = new QLabel("&User name");

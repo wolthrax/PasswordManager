@@ -18,6 +18,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::resizeEvent(QResizeEvent* event)
+{
+   QMainWindow::resizeEvent(event);
+   ui->splitter2->resize(ui->centralWidget->geometry().width(), ui->centralWidget->geometry().height()-20);
+}
+
 void MainWindow::on_actionAddGroup_triggered()
 {
     AddGroupDialog* addGroupDialog = new AddGroupDialog();
@@ -87,19 +93,29 @@ void MainWindow::refreshWidget(QString widgetName, QString groupId)
 void MainWindow::on_actionAddEntry_triggered()
 {
     AddEntryDialog* addEntryDialog = new AddEntryDialog;
+    Entry entry;
     if (addEntryDialog->exec() == QDialog::Accepted)
     {
-        Entry entry;
         entry.setTitle(addEntryDialog->getTitle());
         entry.setUserName(addEntryDialog->getUserName());
         entry.setPassword(addEntryDialog->getPassword());
         entry.setURL(addEntryDialog->getURL());
         entry.setNotes( addEntryDialog->getNotes());
         entry.setGroupid(ui->groupWidget->currentItem()->text(100));
-        entryManager->addEntry(entry);
-        refreshWidget("entryWidget", entry.getGroupid());
+        if(CheckPassword::check(addEntryDialog->getPassword(), addEntryDialog->getPasswordRepeat()))
+        {
+            entryManager->addEntry(entry);
+            refreshWidget("entryWidget", entry.getGroupid());
+            delete addEntryDialog;
+        } else
+        {
+            QMessageBox *message = new QMessageBox(QMessageBox::Information, "Password", "Passwords do not match", QMessageBox::Ok);
+            message->exec();
+            delete addEntryDialog;
+            delete message;
+            on_actionAddEntry_triggered();
+        }
     }
-    delete addEntryDialog;
 }
 
 void MainWindow::on_groupWidget_itemSelectionChanged()
@@ -136,10 +152,23 @@ void MainWindow::on_entryWidget_itemSelectionChanged()
     {
         ui->actionEditEntry->setEnabled(false);
         ui->actionRemoveEntry->setEnabled(false);
-    } else
+        ui->actionCopy_password_to_clipboard->setEnabled(false);
+        ui->actionEdit_windows_user->setEnabled(false);
+        ui->actionRemove_windows_user->setEnabled(false);
+    }
+    else
     {
-        ui->actionEditEntry->setEnabled(true);
-        ui->actionRemoveEntry->setEnabled(true);
+        if(ui->entryWidget->currentItem()->text(105) == "c")
+        {
+            ui->actionEditEntry->setEnabled(true);
+            ui->actionRemoveEntry->setEnabled(true);
+            ui->actionCopy_password_to_clipboard->setEnabled(true);
+        }
+        if(ui->entryWidget->currentItem()->text(105) == "w")
+        {
+            ui->actionEdit_windows_user->setEnabled(true);
+            ui->actionRemove_windows_user->setEnabled(true);
+        }
     }
 }
 
@@ -148,7 +177,8 @@ void MainWindow::on_actionEditEntry_triggered()
     AddEntryDialog* addEntryDialog = new AddEntryDialog(0,
                                                         ui->entryWidget->currentItem()->text(0),
                                                         ui->entryWidget->currentItem()->text(1),
-                                                        ui->entryWidget->currentItem()->text(2),
+                                                        ui->entryWidget->currentItem()->text(104),
+                                                        ui->entryWidget->currentItem()->text(104),
                                                         ui->entryWidget->currentItem()->text(3),
                                                         ui->entryWidget->currentItem()->text(4));
     if (addEntryDialog->exec() == QDialog::Accepted)
@@ -161,10 +191,20 @@ void MainWindow::on_actionEditEntry_triggered()
         entry.setNotes(addEntryDialog->getNotes());
         entry.setId(ui->entryWidget->currentItem()->text(100));
         entry.setGroupid(ui->groupWidget->currentItem()->text(100));
-        entryManager->editEntry(entry);
-        refreshWidget("entryWidget", entry.getGroupid());
+        if(CheckPassword::check(addEntryDialog->getPassword(), addEntryDialog->getPasswordRepeat()))
+        {
+            entryManager->editEntry(entry);
+            refreshWidget("entryWidget", entry.getGroupid());
+            delete addEntryDialog;
+        } else
+        {
+            QMessageBox *message = new QMessageBox(QMessageBox::Information, "Password", "Passwords do not match", QMessageBox::Ok);
+            message->exec();
+            delete addEntryDialog;
+            delete message;
+            on_actionEditEntry_triggered();
+        }
     }
-    delete addEntryDialog;
 }
 
 void MainWindow::on_groupWidget_itemClicked(QTreeWidgetItem *item)
@@ -174,37 +214,20 @@ void MainWindow::on_groupWidget_itemClicked(QTreeWidgetItem *item)
 
 void MainWindow::on_actionSave_triggered()
 {
-    QString newXMLPath;
-    int status = 0;
-    if(QString::compare(xmlPath, "") == 0)
-    {
-        newXMLPath = QFileDialog::getSaveFileName(this, tr("Open Image"), "/home/newDatabase", tr("XML File (*.xml)"));
-        qDebug() << newXMLPath;
-        if(newXMLPath != "")
-        {
-            status = xmlManager->save(newXMLPath);
-        }
-        if(status == 0)
-        {
-            xmlPath = newXMLPath;
-        }
-    }
-    else
-    {
-        status = xmlManager->save(xmlPath);
-    }
 
-    if(status != 0)
+    int status = 0;
+    status = xmlManager->save(xmlPath, CurrentObjects::password);
+    if (status != 0)
     {
         int n = QMessageBox::warning(0,
                                     "Warning",
-                                    "The file can not be written to this directory"
-                                    "\nDo you want to change another directory?",
+                                    Messages::getMessage(status),
                                     QMessageBox::Yes |
                                     QMessageBox::No,
                                     QMessageBox::Yes
                                     );
-        if (n == QMessageBox::Yes) {
+        if (n == QMessageBox::Yes)
+        {
             on_actionSave_triggered();
         }
     }
@@ -214,39 +237,69 @@ void MainWindow::on_actionOpen_triggered()
 {
     QString openFilePath = QFileDialog::getOpenFileName(this, tr("Open Image"), "/home/newDatabase", tr("XML File (*.xml)"));
     int status = 0;
-
-    if(xmlPath == "")
+    if(openFilePath != "")
     {
-        status = xmlManager->open(openFilePath);
-    }
-    if(status == -1)
-    {
-        int n = QMessageBox::critical (0,
-                                    "Attention",
-                                    "Can not open file"
-                                    "\nDo you want to change another file?",
-                                    QMessageBox::Yes | QMessageBox::No);
-
-        if (n == QMessageBox::Yes)
+        bool bOk;
+        QString str = QInputDialog::getText (0, "Input", "Name:", QLineEdit::Password, "", &bOk);
+        if(bOk)
         {
-            on_actionOpen_triggered();
-        }
-    }
-    if(status == -2)
-    {
-        QMessageBox::critical (0, "Attention", "Invalid file", QMessageBox::Ok);
-    }
-    if(status == 0)
-    {
-        xmlPath = openFilePath;
-    }
+            status = xmlManager->open(openFilePath, str);
+            if(!CurrentObjects::access)
+            {
+                QMessageBox *message = new QMessageBox(QMessageBox::Information, "Accsess", "Access dinaed", QMessageBox::Ok);
+                message->exec();
+            }
 
-    refreshWidget("groupWidget");
+        }
+
+        if(status != 0)
+        {
+            int n = QMessageBox::critical (0,
+                                        "Attention",
+                                        Messages::getMessage(status),
+                                        QMessageBox::Yes | QMessageBox::No);
+
+            if (n == QMessageBox::Yes)
+            {
+                on_actionOpen_triggered();
+            }
+        }
+        else
+        {
+            xmlPath = openFilePath;
+            ui->actionSave->setEnabled(true);
+        }
+        refreshWidget("groupWidget");
+        refreshWidget("entryWidget");
+    }
 }
 
 void MainWindow::on_actionNew_triggered()
 {
-
+    QString newXMLPath = QFileDialog::getSaveFileName(this, tr("Open database"), "", tr("XML File (*.xml)"));
+    AddPassword *addPassword = new AddPassword();
+    if (addPassword->exec() == QDialog::Accepted)
+    {
+        if(addPassword->getPassword() == addPassword->getRepeat())
+        {
+            CurrentObjects::entryList.clear();
+            CurrentObjects::groupList.clear();
+            if(xmlManager->save(newXMLPath, addPassword->getPassword()) == 0)
+            {
+                CurrentObjects::password = addPassword->getPassword();
+                xmlPath = newXMLPath;
+                xmlManager->open(xmlPath, CurrentObjects::password);
+                ui->actionSave->setEnabled(true);
+                refreshWidget("groupWidget");
+                refreshWidget("entryWidget");
+            }
+        }
+        else
+        {
+            QMessageBox *message = new QMessageBox(QMessageBox::Information, "Password", "Passwords do not match", QMessageBox::Ok);
+            message->exec();
+        }
+    }
 }
 
 void MainWindow::on_windowsGroupWidget_itemClicked(QTreeWidgetItem *item)
@@ -261,23 +314,10 @@ void MainWindow::on_actionAdd_windows_group_triggered()
     if (addGroupDialog->exec() == QDialog::Accepted)
     {
         status = groupManager->addWindowsGroup(addGroupDialog->getName(), addGroupDialog->getNotes());
-    }
-    if(status == 0)
-    {
         refreshWidget("windowsGroupWidget");
     }
-    else if(status == -1)
-    {
-        QMessageBox::critical (0, "Error", "Not enough rights to create a group of windows", QMessageBox::Ok);
-    }
-    if(status == -2)
-    {
-        QMessageBox::critical (0, "Error", "Group " + addGroupDialog->getName() + " already exists", QMessageBox::Ok);
-    }
-    if(status == -3)
-    {
-        QMessageBox::critical (0, "Error", "Unnown error", QMessageBox::Ok);
-    }
+    if(status != 0)
+        QMessageBox::critical (0, "Error", Messages::getMessage(status), QMessageBox::Ok);
 }
 
 void MainWindow::on_actionEdit_windows_group_triggered()
@@ -291,23 +331,10 @@ void MainWindow::on_actionEdit_windows_group_triggered()
         status = groupManager->editWindowsGroup(ui->windowsGroupWidget->currentItem()->text(0),
                                                 addGroupDialog->getName(),
                                                 addGroupDialog->getNotes());
-    }
-    if(status == 0)
-    {
         refreshWidget("windowsGroupWidget");
     }
-    else if(status == -1)
-    {
-        QMessageBox::critical (0, "Error", "Not enough rights to update a group of windows", QMessageBox::Ok);
-    }
-    if(status == -2)
-    {
-        QMessageBox::critical (0, "Error", "Group " + addGroupDialog->getName() + " already exists", QMessageBox::Ok);
-    }
-    if(status == -3)
-    {
-        QMessageBox::critical (0, "Error", "Unnown error", QMessageBox::Ok);
-    }
+    if(status != 0)
+        QMessageBox::critical (0, "Error", Messages::getMessage(status), QMessageBox::Ok);
 }
 
 void MainWindow::on_actionRemove_windows_group_triggered()
@@ -320,22 +347,9 @@ void MainWindow::on_actionRemove_windows_group_triggered()
     if(n == QMessageBox::Yes)
     {
         int status = groupManager->removeWindowsGroup(item->text(0));
-        if(status == 0)
-        {
-            refreshWidget("windowsGroupWidget");
-        }
-        else if(status == -1)
-        {
-            QMessageBox::critical (0, "Error", "Not enough rights to remove a group of windows", QMessageBox::Ok);
-        }
-        else if(status == -2)
-        {
-            QMessageBox::critical (0, "Error", "Group " + item->text(0) + " does not exists", QMessageBox::Ok);
-        }
-        else if(status == -3)
-        {
-            QMessageBox::critical (0, "Error", "Unnown error", QMessageBox::Ok);
-        }
+        if(status != 0)
+            QMessageBox::critical (0, "Error", Messages::getMessage(status), QMessageBox::Ok);
+        refreshWidget("windowsGroupWidget");
     }
 }
 
@@ -352,17 +366,21 @@ void MainWindow::on_actionAdd_windows_user_triggered()
         userInfo.usri1_script_path = NULL;
         userInfo.usri1_priv = USER_PRIV_USER;
 
-        if(addUserDialog->getPassword() == addUserDialog->getPasswordRepeat())
+        if(CheckPassword::check(addUserDialog->getPassword(), addUserDialog->getPasswordRepeat()))
         {
             userInfo.usri1_password = StringConverter::toWCHAR(addUserDialog->getPassword());
             int status = entryManager->addWindowsUser(userInfo);
             status = groupManager->addMemberInWindowsGroup(ui->windowsGroupWidget->currentItem()->text(0) ,addUserDialog->getUserName());
-            QMessageBox::critical (0, "Attention", QString::number(status), QMessageBox::Ok);
+            if(status != 0)
+                QMessageBox::critical (0, "Error", Messages::getMessage(status), QMessageBox::Ok);
+            else refreshWidget("windowsEntryWidget", ui->windowsGroupWidget->currentItem()->text(0));
 
         }
         else
         {
-            // TODO Error
+            QMessageBox *message = new QMessageBox(QMessageBox::Information, "Password", "Passwords do not match", QMessageBox::Ok);
+            message->exec();
+            delete message;
             on_actionAdd_windows_user_triggered();
         }
     }
@@ -374,7 +392,7 @@ void MainWindow::on_actionEdit_windows_user_triggered()
                                                      ui->entryWidget->currentItem()->text(1),
                                                      ui->entryWidget->currentItem()->text(2),
                                                      ui->entryWidget->currentItem()->text(2),
-                                                     ui->entryWidget->currentItem()->text(5));
+                                                     ui->entryWidget->currentItem()->text(4));
     if (addUserDialog->exec() == QDialog::Accepted)
     {
         USER_INFO_1 userInfo;
@@ -389,7 +407,9 @@ void MainWindow::on_actionEdit_windows_user_triggered()
         {
             userInfo.usri1_password = StringConverter::toWCHAR(addUserDialog->getPassword());
             int status = entryManager->editWindowsUser(userInfo, ui->entryWidget->currentItem()->text(1));
-            QMessageBox::critical (0, "Attention", QString::number(status), QMessageBox::Ok);
+            if(status != 0)
+                QMessageBox::critical (0, "Error", Messages::getMessage(status), QMessageBox::Ok);
+            else refreshWidget("windowsEntryWidget", ui->windowsGroupWidget->currentItem()->text(0));
 
         }
         else
@@ -409,6 +429,28 @@ void MainWindow::on_actionRemove_windows_user_triggered()
     if(n==QMessageBox::Yes)
     {
         int status = entryManager->removeWindowsUser(item->text(1));
-        QMessageBox::critical (0, "Attention", QString::number(status), QMessageBox::Ok);
+        if(status != 0)
+            QMessageBox::critical (0, "Error", Messages::getMessage(status), QMessageBox::Ok);
+        else refreshWidget("windowsEntryWidget", ui->windowsGroupWidget->currentItem()->text(0));
     }
+}
+
+void MainWindow::on_windowsGroupWidget_itemSelectionChanged()
+{
+    if(ui->windowsGroupWidget->selectedItems().isEmpty())
+    {
+        ui->actionAdd_windows_user->setEnabled(false);
+        ui->actionEdit_windows_group->setEnabled(false);
+        ui->actionRemove_windows_group->setEnabled(false);
+    } else
+    {
+        ui->actionAdd_windows_user->setEnabled(true);
+        ui->actionEdit_windows_group->setEnabled(true);
+        ui->actionRemove_windows_group->setEnabled(true);
+    }
+}
+
+void MainWindow::on_actionCopy_password_to_clipboard_triggered()
+{
+    QApplication::clipboard()->setText(ui->entryWidget->currentItem()->text(104));
 }

@@ -29,7 +29,9 @@ SOURCES += main.cpp\
     managers/system/UserSystem.cpp \
     managers/system/GroupSystem.cpp \
     dialogs/AddUserDialog.cpp \
-    dialogs/Messages.cpp
+    utils/Messages.cpp \
+    utils/CheckPassword.cpp \
+    dialogs/AddPassword.cpp
 
 HEADERS  += controllers/Controller.h \
     entities/Group.h \
@@ -47,7 +49,9 @@ HEADERS  += controllers/Controller.h \
     managers/system/UserSystem.h \
     managers/system/GroupSystem.h \
     dialogs/AddUserDialog.h \
-    dialogs/Messages.h
+    utils/Messages.h \
+    utils/CheckPassword.h \
+    dialogs/AddPassword.h
 
 FORMS    += ui/Mainwindow.ui
 

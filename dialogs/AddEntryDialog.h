@@ -21,6 +21,7 @@ private:
     QLineEdit *titleLineEdit;
     QLineEdit *userNameLineEdit;
     QLineEdit *passwordLineEdit;
+    QLineEdit *passwordRepeatLineEdit;
     QLineEdit *URLLineEdit;
     QTextEdit *notesTextEdit;
 
@@ -29,6 +30,7 @@ public:
                    QString title = 0,
                    QString userName = 0,
                    QString password = 0,
+                   QString passwordRepeat = 0,
                    QString URL = 0,
                    QString notes = 0);
     virtual ~AddEntryDialog();
@@ -36,6 +38,7 @@ public:
     QString getTitle();
     QString getUserName();
     QString getPassword();
+    QString getPasswordRepeat();
     QString getURL();
     QString getNotes();
 

@@ -19,5 +19,6 @@
         <file>icons/addWinUser.png</file>
         <file>icons/editWinUser.png</file>
         <file>icons/removeWinUser.png</file>
+        <file>icons/copy.png</file>
     </qresource>
 </RCC>

@@ -15,10 +15,8 @@ public:
     static QList<Entry> entryList;
     static QList<Group> groupList;
 
-    static QList<Group> windowsGroupList;
-    static QList<Entry> windowsEntryList;
-
     static QString password;
+    static bool access;
 
 };
 

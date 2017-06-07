@@ -10,16 +10,22 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QHeaderView>
+#include <QClipboard>
 
 #include "dialogs/AddEntryDialog.h"
 #include "dialogs/AddGroupDialog.h"
 #include "dialogs/AddUserDialog.h"
+#include "dialogs/AddPassword.h"
+#include "utils/Messages.h"
 #include "entities/Group.h"
 #include "entities/CurrentObjects.h"
 #include "managers/GroupManager.h"
 #include "managers/EntryManager.h"
 #include "managers/XMLManager.h"
 #include "utils/StringConverter.h"
+#include "utils/CheckPassword.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -41,6 +47,7 @@ public:
 
 
 private slots:
+    void resizeEvent(QResizeEvent* event);
 
     void on_actionAddGroup_triggered();
 
@@ -79,6 +86,10 @@ private slots:
     void on_actionEdit_windows_user_triggered();
 
     void on_actionRemove_windows_user_triggered();
+
+    void on_windowsGroupWidget_itemSelectionChanged();
+
+    void on_actionCopy_password_to_clipboard_triggered();
 
 private:
     Ui::MainWindow *ui;

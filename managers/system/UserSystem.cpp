@@ -84,6 +84,7 @@ int UserSystem::addWindowsUser(USER_INFO_1 userInfo)
                         1,                                      // уровень информации 1
                         (LPBYTE)&userInfo,                      // адрес информации о пользователе
                         NULL);                                  // индексирования в структуре данных нет
+    NetApiBufferFree(&userInfo);
     return ret_status;
 }
 
@@ -96,13 +97,13 @@ int UserSystem::editWindowsUser(USER_INFO_1 userUnfo, wchar_t *oldUserName)
                         0,                                      // изменяем имя пользователя
                         (LPBYTE)&userUnfo,                      // адрес информации о пользователе
                         NULL);                                  // нет индексации
+    NetApiBufferFree(&userUnfo);
     return ret_status;
 }
 
 int UserSystem::removeWindowsUser(wchar_t *userName)
 {
     NET_API_STATUS ret_status;
-    qDebug() << QString::fromWCharArray(userName);
     ret_status = NetUserDel(
         NULL,                                                   // имя домена
         (LPWSTR)userName);                                      // имя пользователя

@@ -10,11 +10,11 @@ XMLManager::~XMLManager()
 
 }
 
-int XMLManager::save(QString filePath)
+int XMLManager::save(QString filePath, QString password)
 {
     QDomDocument document;
     QDomElement rootNote = document.createElement("passManager");
-    rootNote.setAttribute("password", CurrentObjects::password);
+    rootNote.setAttribute("password", password);
     document.appendChild(rootNote);
 
     QDomElement groupsNode = document.createElement("groups");
@@ -29,6 +29,10 @@ int XMLManager::save(QString filePath)
         QDomElement groupNameNode = document.createElement("name");
         groupNameNode.appendChild(document.createTextNode(group.getName()));
         groupNode.appendChild(groupNameNode);
+
+        QDomElement groupNotesNode = document.createElement("notes");
+        groupNotesNode.appendChild(document.createTextNode(group.getNotes()));
+        groupNode.appendChild(groupNotesNode);
 
         QDomElement entriesNode = document.createElement("entries");
         groupNode.appendChild(entriesNode);
@@ -79,14 +83,14 @@ int XMLManager::save(QString filePath)
     else
     {
         QTextStream stream(&file);
-        stream << document.toString();
+        stream << document.toString().toLocal8Bit().toBase64();
         file.close();
         return 0;
     }
 
 }
 
-int XMLManager::open(QString filePath)
+int XMLManager::open(QString filePath, QString password)
 {
     QDomDocument document;
     QFile file(filePath);
@@ -96,7 +100,8 @@ int XMLManager::open(QString filePath)
     }
     else
     {
-        if(!document.setContent(&file))
+        QByteArray data = QByteArray::fromBase64(file.readAll());
+        if(!document.setContent(data))
         {
             return -2;
         }
@@ -104,41 +109,48 @@ int XMLManager::open(QString filePath)
     }
 
     QDomElement root = document.firstChildElement();
-    QDomNodeList groupItems = root.elementsByTagName("group");
-    CurrentObjects::groupList.clear();
-
-    for(int i = 0; i < groupItems.size(); i++)
+    if(root.attribute("password") == password)
     {
-        QDomNode groupItem = groupItems.at(i);
-        if(groupItem.isElement())
+        CurrentObjects::access = true;
+        CurrentObjects::password = password;
+        QDomNodeList groupItems = root.elementsByTagName("group");
+        CurrentObjects::groupList.clear();
+
+        for(int i = 0; i < groupItems.size(); i++)
         {
-            QDomElement groupElement = groupItem.toElement();
-            Group group;
-            group.setId(groupElement.attribute("id"));
-            group.setName(groupElement.firstChildElement("name").text());
-            CurrentObjects::groupList.append(group);
+            QDomNode groupItem = groupItems.at(i);
+            if(groupItem.isElement())
+            {
+                QDomElement groupElement = groupItem.toElement();
+                Group group;
+                group.setId(groupElement.attribute("id"));
+                group.setName(groupElement.firstChildElement("name").text());
+                group.setNotes(groupElement.firstChildElement("notes").text());
+                CurrentObjects::groupList.append(group);
+            }
+        }
+
+        QDomNodeList entryItems = root.elementsByTagName("entry");
+        CurrentObjects::entryList.clear();
+
+        for(int i = 0; i < entryItems.size(); i++)
+        {
+            QDomNode entryItem = entryItems.at(i);
+            if(entryItem.isElement())
+            {
+                QDomElement entryElement = entryItem.toElement();
+                Entry entry;
+                entry.setId(entryElement.attribute("id"));
+                entry.setGroupid(entryElement.attribute("groupId"));
+                entry.setTitle(entryElement.firstChildElement("title").text());
+                entry.setUserName(entryElement.firstChildElement("userName").text());
+                entry.setPassword(entryElement.firstChildElement("password").text());
+                entry.setURL(entryElement.firstChildElement("URL").text());
+                entry.setNotes(entryElement.firstChildElement("notes").text());
+                CurrentObjects::entryList.append(entry);
+            }
         }
     }
-
-    QDomNodeList entryItems = root.elementsByTagName("entry");
-    CurrentObjects::entryList.clear();
-
-    for(int i = 0; i < entryItems.size(); i++)
-    {
-        QDomNode entryItem = entryItems.at(i);
-        if(entryItem.isElement())
-        {
-            QDomElement entryElement = entryItem.toElement();
-            Entry entry;
-            entry.setId(entryElement.attribute("id"));
-            entry.setGroupid(entryElement.attribute("groupId"));
-            entry.setTitle(entryElement.firstChildElement("title").text());
-            entry.setUserName(entryElement.firstChildElement("userName").text());
-            entry.setPassword(entryElement.firstChildElement("password").text());
-            entry.setURL(entryElement.firstChildElement("URL").text());
-            entry.setNotes(entryElement.firstChildElement("notes").text());
-            CurrentObjects::entryList.append(entry);
-        }
-    }
+    else CurrentObjects::access = false;
     return 0;
 }

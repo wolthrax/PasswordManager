@@ -151,7 +151,6 @@
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
-    <addaction name="actionSaveAs"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -163,6 +162,7 @@
     <addaction name="actionRemoveGroup"/>
     <addaction name="separator"/>
     <addaction name="actionAddEntry"/>
+    <addaction name="actionCopy_password_to_clipboard"/>
     <addaction name="actionEditEntry"/>
     <addaction name="actionRemoveEntry"/>
     <addaction name="separator"/>
@@ -178,6 +178,9 @@
    <addaction name="menuEdit"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -192,10 +195,11 @@
    <addaction name="actionSave"/>
    <addaction name="separator"/>
    <addaction name="actionAddGroup"/>
-   <addaction name="actionRemoveGroup"/>
    <addaction name="actionEditGroup"/>
+   <addaction name="actionRemoveGroup"/>
    <addaction name="separator"/>
    <addaction name="actionAddEntry"/>
+   <addaction name="actionCopy_password_to_clipboard"/>
    <addaction name="actionEditEntry"/>
    <addaction name="actionRemoveEntry"/>
    <addaction name="separator"/>
@@ -217,17 +221,15 @@
    </property>
   </action>
   <action name="actionSave">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../resources/iconpaths.qrc">
      <normaloff>:/icons/save.ico</normaloff>:/icons/save.ico</iconset>
    </property>
    <property name="text">
     <string>Save</string>
-   </property>
-  </action>
-  <action name="actionSaveAs">
-   <property name="text">
-    <string>Save as...</string>
    </property>
   </action>
   <action name="actionExit">
@@ -326,6 +328,9 @@
    </property>
   </action>
   <action name="actionEdit_windows_group">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../resources/iconpaths.qrc">
      <normaloff>:/icons/editWinGroup.png</normaloff>:/icons/editWinGroup.png</iconset>
@@ -335,6 +340,9 @@
    </property>
   </action>
   <action name="actionRemove_windows_group">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../resources/iconpaths.qrc">
      <normaloff>:/icons/removeWinGroup.png</normaloff>:/icons/removeWinGroup.png</iconset>
@@ -344,6 +352,9 @@
    </property>
   </action>
   <action name="actionAdd_windows_user">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../resources/iconpaths.qrc">
      <normaloff>:/icons/addWinUser.png</normaloff>:/icons/addWinUser.png</iconset>
@@ -353,6 +364,9 @@
    </property>
   </action>
   <action name="actionEdit_windows_user">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../resources/iconpaths.qrc">
      <normaloff>:/icons/editWinUser.png</normaloff>:/icons/editWinUser.png</iconset>
@@ -362,12 +376,27 @@
    </property>
   </action>
   <action name="actionRemove_windows_user">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="../resources/iconpaths.qrc">
      <normaloff>:/icons/removeWinUser.png</normaloff>:/icons/removeWinUser.png</iconset>
    </property>
    <property name="text">
     <string>Remove windows user</string>
+   </property>
+  </action>
+  <action name="actionCopy_password_to_clipboard">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/iconpaths.qrc">
+     <normaloff>:/icons/copy.png</normaloff>:/icons/copy.png</iconset>
+   </property>
+   <property name="text">
+    <string>Copy password to clipboard</string>
    </property>
   </action>
  </widget>

@@ -18,8 +18,8 @@ public:
     XMLManager();
     virtual ~XMLManager();
 
-    int save(QString);
-    int open(QString);
+    int save(QString, QString);
+    int open(QString, QString);
 
 };
 
