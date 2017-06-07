@@ -264,7 +264,7 @@ void MainWindow::on_actionRemove_windows_user_triggered()
 
 void MainWindow::on_actionOpen_triggered()
 {
-    QString openFilePath = QFileDialog::getOpenFileName(this, tr("Open Image"), "/home/newDatabase", tr("XML File (*.xml)"));
+    QString openFilePath = QFileDialog::getOpenFileName(this, tr("Open Image"), "/home/newDatabase", tr("Pass File (*.pass)"));
     int status = 0;
     if(openFilePath != "")
     {
@@ -326,7 +326,7 @@ void MainWindow::on_actionSave_triggered()
 
 void MainWindow::on_actionNew_triggered()
 {
-    QString newXMLPath = QFileDialog::getSaveFileName(this, tr("Open database"), "", tr("XML File (*.xml)"));
+    QString newXMLPath = QFileDialog::getSaveFileName(this, tr("Open database"), "", tr("Pass File (*.pass)"));
     AddPassword *addPassword = new AddPassword();
     if(newXMLPath != "")
     {
